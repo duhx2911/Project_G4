@@ -510,6 +510,7 @@ h3.card-title.ten {
 /* css cho margin slick */
 .card{
     margin: 0 10px;
+    height: 356px !important;
 }
 
 .khoisanpham {
