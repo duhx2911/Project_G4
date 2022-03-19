@@ -5,7 +5,6 @@
     //print_r($result);
     //exit();
 ?>
-)
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -79,15 +78,33 @@
                             <a href="#" class="btn btn-secondary rounded-circle">
                                 <i class="fa fa-user"></i>
                             </a>
-                            <a class="nav-link text-dark text-uppercase" href="#" style="display:inline-block">Tài
-                                khoản</a>
+                            <?php 
+                                if(!isset($_COOKIE['email'])){
+                                    echo '<a class="nav-link text-dark text-uppercase" href="#" style="display:inline-block">Tài khoản</a>';
+                                };
+                                if(isset($_COOKIE['email'])){
+                                    echo '<a class="nav-link text-dark text-uppercase" href="#" style="display:inline-block">';
+                                    echo $_COOKIE['email'];
+                                };
+                            ?>
                         </li>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item nutdangky text-center mb-2" href="#" data-toggle="modal"
-                                data-target="#formdangky">Đăng ký</a>
-                            <a class="dropdown-item nutdangnhap text-center" href="#" data-toggle="modal"
-                                data-target="#formdangnhap">Đăng nhập</a>
-                        </div>
+                        <?php 
+                        if(!isset($_COOKIE['email'])){
+                           echo '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item nutdangky text-center mb-2" href="#" data-toggle="modal"
+                                    data-target="#formdangky">Đăng ký</a>
+                                <a class="dropdown-item nutdangnhap text-center" href="#" data-toggle="modal"
+                                    data-target="#formdangnhap">Đăng nhập</a>
+                            </div>';
+                        };
+                        ?>
+                        <?php 
+                        if(isset($_COOKIE['email'])){
+                           echo '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <a href="logout.php" class="dropdown-item text-center mb-2" data-toggle="modal">Đăng Xuất</a>
+                            </div>';
+                        };
+                        ?>
                     </div>
                     <li class="nav-item giohang">
                         <a href="gio-hang.html" class="btn btn-secondary rounded-circle">
@@ -125,7 +142,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="form-signup" class="form-signin mt-2">
+                    <form action="register_submit.php" method="POST" id="form-signup" class="form-signin mt-2">
                         <div class="form-label-group">
                             <input type="text" class="form-control" placeholder="Nhập họ và tên" name="name" required
                                 autofocus>
@@ -146,7 +163,7 @@
                             <input type="password" class="form-control" name="confirm_password"
                                 placeholder="Nhập lại mật khẩu" required>
                         </div>
-                        <button class="btn btn-lg btn-block btn-signin text-uppercase text-white mt-3" type="submit"
+                        <button name="submit-dangky" class="btn btn-lg btn-block btn-signin text-uppercase text-white mt-3" type="submit"
                             style="background: #F5A623">Đăng ký</button>
                         <hr class="mt-3 mb-2">
                         <div class="custom-control custom-checkbox">
@@ -182,7 +199,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="form-signin" class="form-signin mt-2">
+                    <form action="login_submit.php" method="POST" id="form-signin" class="form-signin mt-2">
                         <div class="form-label-group">
                             <input type="email" class="form-control" placeholder="Nhập địa chỉ email" name="email"
                                 required autofocus>
@@ -199,7 +216,7 @@
                                 khẩu</a>
                         </div>
 
-                        <button class="btn btn-lg btn-block btn-signin text-uppercase text-white" type="submit"
+                        <button name="submit-dangnhap" class="btn btn-lg btn-block btn-signin text-uppercase text-white" type="submit"
                             style="background: #F5A623">Đăng nhập</button>
                         <hr class="my-4">
                         <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i
