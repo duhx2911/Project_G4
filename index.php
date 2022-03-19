@@ -101,7 +101,8 @@
                         <?php 
                         if(isset($_COOKIE['email'])){
                            echo '<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a href="logout.php" class="dropdown-item text-center mb-2" data-toggle="modal">Đăng Xuất</a>
+                           <a class="dropdown-item nutdangnhap text-center" href="#" data-toggle="modal"
+                           data-target="#formdangnhap">Đăng xuất</a>
                             </div>';
                         };
                         ?>
@@ -177,7 +178,34 @@
         </div>
     </div>
 
-
+    <!-- form dang xuat -->
+    <?php if(isset($_COOKIE['email'])){
+    echo '
+    <div class="modal fade mt-5" id="formdangnhap" data-backdrop="static" tabindex="-1"
+        aria-labelledby="dangnhap_tieude" aria-hidden="true">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <ul class="tabs d-flex justify-content-around list-unstyled mb-0">
+                        <li class="tab tab-dangnhap text-center" style="width: 100%;    ">
+                            <a class=" text-decoration-none">Bạn có muốn đăng xuất không?</a>
+                            <hr>
+                        </li>
+                    </ul>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="logout.php" method="POST" id="form-signin" class="form-signin mt-2">
+                        <button name="submit-dangnhap" class="btn btn-lg btn-block btn-signin text-uppercase text-white" type="submit"
+                            style="background: #F5A623">Đăng xuất</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>';};
+    ?>
     <!-- form dang nhap khi click vao button tren header-->
     <div class="modal fade mt-5" id="formdangnhap" data-backdrop="static" tabindex="-1"
         aria-labelledby="dangnhap_tieude" aria-hidden="true">
@@ -255,6 +283,7 @@
             </div>
         </div>
     </section>
+    
 
     <!-- noi dung danh muc sach(categories) + banner slider -->
     <section class="header bg-light">
