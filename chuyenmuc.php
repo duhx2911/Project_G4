@@ -1,19 +1,29 @@
 <?php
     include("lib_db.php");
-    $sql = "select * from sach";
-    $result = select_list($sql);
-    //print_r($result);
-    //exit();
+	$id = isset($_REQUEST["id"]) ? $_REQUEST["id"] : 0;
+    // $p = isset($_REQUEST["p"]) ? $_REQUEST["p"] : 0;
+	// if ($id<  1) return ;
+    // if ($p < 1 ) $p = 1 ;
+    
+    $sql = "SELECT * FROM sach where id=$id";
+    // print_r($sql).exit();
+    $result = select_one($sql);
+    $cm = "SELECT * FROM danhmucsach WHERE id={$id}";
+    $cmo = select_one($cm);
+    // print_r($result).die("ok");
+    $sqlCat = "SELECT * FROM danhmucsach";
+    $resultCat = select_list($sqlCat);
+    // print_r($cmo).die("");
+    $sqlOther = "SELECT * FROM sach where gid={$id}";
+    $resultOther = select_list($sqlOther);
+    // print_r($sql).exit();
+    $list = select_list($sql);
 ?>
-)
+
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
-    <title>Parbo - Thiên đường sách cho bạn</title>
-    <meta name="description"
-        content="Mua sách online hay, giá tốt nhất, combo sách hot bán chạy, giảm giá cực khủng cùng với những ưu đãi như miễn phí giao hàng, quà tặng miễn phí, đổi trả nhanh chóng. Đa dạng sản phẩm, đáp ứng mọi nhu cầu.">
-    <meta name="keywords" content="nhà sách online, mua sách hay, sách hot, sách bán chạy, sách giảm giá nhiều">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -25,7 +35,7 @@
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 
-    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/product-item.css">
     <script type="text/javascript" src="js/main.js"></script>
     <link rel="stylesheet" href="fontawesome_free_5.13.0/css/all.css">
 
@@ -35,9 +45,12 @@
     <link rel="stylesheet" type="text/css" href="slick/slick.css" />
     <link rel="stylesheet" type="text/css" href="slick/slick-theme.css" />
     <script type="text/javascript" src="slick/slick.min.js"></script>
-    <script type="text/javascript"src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
-    <link rel="canonical" href="http://parbo.com/">
-    <meta name="google-site-verification" content="urDZLDaX8wQZ_-x8ztGIyHqwUQh2KRHvH9FhfoGtiEw" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+    <script type="text/javascript"
+        src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.min.js"></script>
+    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
     <link rel="shortcut icon" type="image/png" href="favicon/closed_book_96px.png">
 </head>
 
@@ -51,7 +64,7 @@
     <nav class="navbar navbar-expand-md bg-white navbar-light">
         <div class="container">
             <!-- logo  -->
-            <a class="navbar-brand" href="index.php" style="color: #CF111A;"><b>Parbo</b>.com</a>
+            <a class="navbar-brand" href="index.html" style="color: #CF111A;"><b>Parbo</b>.com</a>
 
             <!-- navbar-toggler  -->
             <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse"
@@ -160,7 +173,6 @@
         </div>
     </div>
 
-
     <!-- form dang nhap khi click vao button tren header-->
     <div class="modal fade mt-5" id="formdangnhap" data-backdrop="static" tabindex="-1"
         aria-labelledby="dangnhap_tieude" aria-hidden="true">
@@ -212,24 +224,32 @@
         </div>
     </div>
 
-
-    <!-- thanh tieu de "danh muc sach" + hotline + ho tro truc tuyen -->
+    <!-- thanh "danh muc sach" đã được ẩn bên trong + hotline + ho tro truc tuyen -->
     <section class="duoinavbar">
         <div class="container text-white">
             <div class="row justify">
-                <div class="col-md-3">
+                <div class="col-lg-3 col-md-5">
                     <div class="categoryheader">
                         <div class="noidungheader text-white">
                             <i class="fa fa-bars"></i>
                             <span class="text-uppercase font-weight-bold ml-1">Danh mục sách</span>
                         </div>
+                        <!-- CATEGORIES -->
+                        <div class="categorycontent">
+                            <ul>
+                                <?php foreach($resultCat as $danhmuc){ ?>
+                                    <li> <a href="chuyenmuc.php?id=<?php echo $danhmuc["id"] ?>"><?php echo $danhmuc["tendanhmuc"] ?></a>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-5 ml-auto contact d-none d-md-block">
                     <div class="benphai float-right">
                         <div class="hotline">
                             <i class="fa fa-phone"></i>
-                            <span>Hotline:<b>88888888</b> </span>
+                            <span>Hotline:<b>1900 1999</b> </span>
                         </div>
                         <i class="fas fa-comments-dollar"></i>
                         <a href="#">Hỗ trợ trực tuyến </a>
@@ -239,140 +259,294 @@
         </div>
     </section>
 
-    <!-- khoi sach moi  -->
-    <section class="_1khoi sachmoi bg-white">
+    <!-- breadcrumb  -->
+    <section class="breadcrumbbar">
         <div class="container">
-            <div class="noidung" style=" width: 100%;">
-                <div class="row">
-                    <!--header-->
-                    <div class="col-12 d-flex justify-content-between align-items-center pb-2 bg-transparent pt-4">
-                        <h1 class="header text-uppercase" style="font-weight: 400;">SÁCH MỚI TUYỂN CHỌN</h1>
-                        <a href="sach-moi-tuyen-chon.html" class="btn btn-warning btn-sm text-white">Xem tất cả</a>
+            <ol class="breadcrumb mb-0 p-0 bg-transparent">
+                <li class="breadcrumb-item"><a href="index.html">Trang chủ</a></li>
+                <li class="breadcrumb-item active"><a href="chuyenmuc.php?id=<?php echo $cmo["id"] ?>"><?php echo $cmo["tendanhmuc"] ?></a></li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- khối sản phẩm  -->
+    <section class="content my-4">
+        <div class="container">
+            <div class="noidung bg-white" style=" width: 100%;">
+                <!-- header của khối sản phẩm : tag(tác giả), bộ lọc và sắp xếp  -->
+                <div class="header-khoi-sp d-flex">
+                    <div class="product-title">
+                        <h3>Sách kinh tế</h3>
+                    </div>
+                    <div class="sort d-flex ml-auto">
+                        <div class="hien-thi">
+                            <label for="hienthi-select" class="label-select">Hiển thị</label>
+                            <select class="hienthi-select">
+                                <option value="30">30</option>
+                                <option value="60">60</option>
+                            </select>
+                        </div>
+                        <div class="sap-xep">
+                            <label for="sapxep-select" class="label-select">Sắp xếp</label>
+                            <select class="sapxep-select">
+                                <option value="moinhat">Mới nhất</option>
+                                <option value="thap-cao">Giá: Thấp - Cao</option>
+                                <option value="cao-thap">Giá: Cao - Thấp</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                <div class="khoisanpham" style="padding-bottom: 2rem;">
-                    <!-- 1 san pham -->
-                    <?php foreach($result as $item){ ?>
-                    <div class="card">
-                        <a href="Lap-trinh-ke-hoach-kinh-doanh-hieu-qua.html" class="motsanpham"
-                            style="text-decoration: none; color: black;" data-toggle="tooltip" data-placement="bottom"
-                            title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
-                            <img class="card-img-top anh" src="<?php echo $item['img'] ?>"
-                                alt="lap-ke-hoach-kinh-doanh-hieu-qua">
-                            <div class="card-body noidungsp mt-3">
-                                <h3 class="card-title ten"><?php echo $item['tensach'] ?></h3>
-                                <small class="tacgia text-muted"><?php echo $item['tacgia'] ?></small>
-                                <div class="gia d-flex align-items-baseline">
-                                    <div class="giamoi"><?php echo $item['giasale'] ?></div>
-                                    <div class="giacu text-muted"><?php echo $item['giagoc'] ?></div>
-                                    <div class="sale"><?php echo $item['sale'] ?></div>
-                                </div>
-                                <div class="danhgia">
-                                    <ul class="d-flex" style="list-style: none;">
-                                    <?php echo $item['rating'] ?>
-                                        <li><span class="text-muted"><?php echo $item['comment'] ?> nhận xét</span></li>
-                                    </ul>
+                
+                <!-- các sản phẩm  -->
+                <div class="items">
+                    <div class="row">
+                        <?php foreach($resultOther as $spcm) { ?>
+                            <div class="col-lg-3 col-md-4 col-xs-6 item DeanGraziosi">
+                                <div class="card ">
+                                    <a href="chitiet.php?id=<?php echo $spcm["id"] ?>" class="motsanpham"
+                                        style="text-decoration: none; color: black;" data-toggle="tooltip"
+                                        data-placement="bottom" title="<?php echo $spcm["tensach"] ?>">
+                                        <img class="card-img-top anh" src="<?php echo $spcm["img"] ?>"
+                                            alt="lap-ke-hoach-kinh-doanh-hieu-qua">
+                                        <div class="card-body noidungsp mt-3">
+                                            <h6 class="card-title ten"><?php echo $spcm["tensach"] ?></h6>
+                                            <small class="tacgia text-muted"><?php echo $spcm["tacgia"] ?></small>
+                                            <div class="gia d-flex align-items-baseline">
+                                                <div class="giamoi"><?php echo $spcm["giasale"] ?></div>
+                                                <div class="giacu text-muted"><?php echo $spcm["giagoc"] ?></div>
+                                                <div class="sale"><?php echo $spcm["sale"] ?></div>
+                                            </div>
+                                            <div class="danhgia">
+                                                <ul class="d-flex" style="list-style: none;">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <span class="text-muted"><?php echo $spcm["comment"] ?> nhận xét</span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
-                        </a>
+                        <?php } ?>
+                            <!-- <div class="col-lg-3 col-md-4 col-xs-6 item DeanGraziosi">
+                                <div class="card ">
+                                    <a href="product-item.html" class="motsanpham"
+                                        style="text-decoration: none; color: black;" data-toggle="tooltip"
+                                        data-placement="bottom" title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
+                                        <img class="card-img-top anh" src="images/lap-ke-hoach-kinh-doanh-hieu-qua.jpg"
+                                            alt="lap-ke-hoach-kinh-doanh-hieu-qua">
+                                        <div class="card-body noidungsp mt-3">
+                                            <h6 class="card-title ten">Lập Kế Hoạch Kinh Doanh Hiệu Quả</h6>
+                                            <small class="tacgia text-muted">Brian Finch</small>
+                                            <div class="gia d-flex align-items-baseline">
+                                                <div class="giamoi">111.200 ₫</div>
+                                                <div class="giacu text-muted">139.000 ₫</div>
+                                                <div class="sale">-20%</div>
+                                            </div>
+                                            <div class="danhgia">
+                                                <ul class="d-flex" style="list-style: none;">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <span class="text-muted">0 nhận xét</span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-xs-6 item MarieForleo">
+                                <div class="card ">
+                                    <a href="product-item.html" class="motsanpham"
+                                        style="text-decoration: none; color: black;" data-toggle="tooltip"
+                                        data-placement="bottom" title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
+                                        <img class="card-img-top anh" src="images/lap-ke-hoach-kinh-doanh-hieu-qua.jpg"
+                                            alt="lap-ke-hoach-kinh-doanh-hieu-qua">
+                                        <div class="card-body noidungsp mt-3">
+                                            <h6 class="card-title ten">Lập Kế Hoạch Kinh Doanh Hiệu Quả</h6>
+                                            <small class="tacgia text-muted">Brian Finch</small>
+                                            <div class="gia d-flex align-items-baseline">
+                                                <div class="giamoi">111.200 ₫</div>
+                                                <div class="giacu text-muted">139.000 ₫</div>
+                                                <div class="sale">-20%</div>
+                                            </div>
+                                            <div class="danhgia">
+                                                <ul class="d-flex" style="list-style: none;">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <span class="text-muted">0 nhận xét</span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-xs-6 item MarieForleo">
+                                <div class="card ">
+                                    <a href="product-item.html" class="motsanpham"
+                                        style="text-decoration: none; color: black;" data-toggle="tooltip"
+                                        data-placement="bottom" title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
+                                        <img class="card-img-top anh" src="images/lap-ke-hoach-kinh-doanh-hieu-qua.jpg"
+                                            alt="lap-ke-hoach-kinh-doanh-hieu-qua">
+                                        <div class="card-body noidungsp mt-3">
+                                            <h6 class="card-title ten">Lập Kế Hoạch Kinh Doanh Hiệu Quả</h6>
+                                            <small class="tacgia text-muted">Brian Finch</small>
+                                            <div class="gia d-flex align-items-baseline">
+                                                <div class="giamoi">111.200 ₫</div>
+                                                <div class="giacu text-muted">139.000 ₫</div>
+                                                <div class="sale">-20%</div>
+                                            </div>
+                                            <div class="danhgia">
+                                                <ul class="d-flex" style="list-style: none;">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <span class="text-muted">0 nhận xét</span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-xs-6 item DavikClark">
+                                <div class="card ">
+                                    <a href="product-item.html" class="motsanpham"
+                                        style="text-decoration: none; color: black;" data-toggle="tooltip"
+                                        data-placement="bottom" title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
+                                        <img class="card-img-top anh" src="images/lap-ke-hoach-kinh-doanh-hieu-qua.jpg"
+                                            alt="lap-ke-hoach-kinh-doanh-hieu-qua">
+                                        <div class="card-body noidungsp mt-3">
+                                            <h6 class="card-title ten">Lập Kế Hoạch Kinh Doanh Hiệu Quả</h6>
+                                            <small class="tacgia text-muted">Brian Finch</small>
+                                            <div class="gia d-flex align-items-baseline">
+                                                <div class="giamoi">111.200 ₫</div>
+                                                <div class="giacu text-muted">139.000 ₫</div>
+                                                <div class="sale">-20%</div>
+                                            </div>
+                                            <div class="danhgia">
+                                                <ul class="d-flex" style="list-style: none;">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <span class="text-muted">0 nhận xét</span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-xs-6 item TSLêThẩmDương">
+                                <div class="card ">
+                                    <a href="product-item.html" class="motsanpham"
+                                        style="text-decoration: none; color: black;" data-toggle="tooltip"
+                                        data-placement="bottom" title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
+                                        <img class="card-img-top anh" src="images/lap-ke-hoach-kinh-doanh-hieu-qua.jpg"
+                                            alt="lap-ke-hoach-kinh-doanh-hieu-qua">
+                                        <div class="card-body noidungsp mt-3">
+                                            <h6 class="card-title ten">Lập Kế Hoạch Kinh Doanh Hiệu Quả</h6>
+                                            <small class="tacgia text-muted">Brian Finch</small>
+                                            <div class="gia d-flex align-items-baseline">
+                                                <div class="giamoi">111.200 ₫</div>
+                                                <div class="giacu text-muted">139.000 ₫</div>
+                                                <div class="sale">-20%</div>
+                                            </div>
+                                            <div class="danhgia">
+                                                <ul class="d-flex" style="list-style: none;">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <span class="text-muted">0 nhận xét</span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4 col-xs-6 item SimonSinek">
+                                <div class="card ">
+                                    <a href="product-item.html" class="motsanpham"
+                                        style="text-decoration: none; color: black;" data-toggle="tooltip"
+                                        data-placement="bottom" title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
+                                        <img class="card-img-top anh" src="images/lap-ke-hoach-kinh-doanh-hieu-qua.jpg"
+                                            alt="lap-ke-hoach-kinh-doanh-hieu-qua">
+                                        <div class="card-body noidungsp mt-3">
+                                            <h6 class="card-title ten">Lập Kế Hoạch Kinh Doanh Hiệu Quả</h6>
+                                            <small class="tacgia text-muted">Brian Finch</small>
+                                            <div class="gia d-flex align-items-baseline">
+                                                <div class="giamoi">111.200 ₫</div>
+                                                <div class="giacu text-muted">139.000 ₫</div>
+                                                <div class="sale">-20%</div>
+                                            </div>
+                                            <div class="danhgia">
+                                                <ul class="d-flex" style="list-style: none;">
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li class="active"><i class="fa fa-star"></i></li>
+                                                    <li><i class="fa fa-star"></i></li>
+                                                    <span class="text-muted">0 nhận xét</span>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div> -->
                     </div>
-                    <?php } ?>
                 </div>
-            </div>
-        </div>
-    </section>
 
-
-
-    <!-- div _1khoi -- khoi sachnendoc -->
-    <section class="_1khoi sachnendoc bg-white mt-4">
-        <div class="container">
-            <div class="noidung" style=" width: 100%;">
-                <div class="row">
-                    <!--header-->
-                    <div class="col-12 d-flex justify-content-between align-items-center pb-2 bg-transparent pt-4">
-                        <h2 class="header text-uppercase" style="font-weight: 400;">SÁCH HAY NÊN ĐỌC</h2>
-                        <a href="#" class="btn btn-warning btn-sm text-white">Xem tất cả</a>
-                    </div>
-                    <!-- 1 san pham -->
-                    <div class="col-lg col-sm-4">
-                        <div class="card">
-                            <a href="#" class="motsanpham" style="text-decoration: none; color: black;"
-                                data-toggle="tooltip" data-placement="bottom"
-                                title="Từng bước chân nở hoa: Khi câu kinh bước tới">
-                                <img class="card-img-top anh" src="images/tung-buoc-chan-no-hoa.jpg"
-                                    alt="tung-buoc-chan-no-hoa">
-                                <div class="card-body noidungsp mt-3">
-                                    <h3 class="card-title ten">Từng bước chân nở hoa: Khi câu kinh bước tới</h3>
-                                    <small class="thoigian text-muted">03/04/2022</small>
-                                    <div><a class="detail" href="#">Xem chi tiết</a></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col-sm-4">
-                        <div class="card">
-                            <a href="#" class="motsanpham" style="text-decoration: none; color: black;"
-                                data-toggle="tooltip" data-placement="bottom" title="Cảm ơn vì đã được thương">
-                                <img class="card-img-top anh" src="images/cam-on-vi-da-duoc-thuong.jpg"
-                                    alt="cam-on-vi-da-duoc-thuong">
-                                <div class="card-body noidungsp mt-3">
-                                    <h3 class="card-title ten">Cảm ơn vì đã được thương</h3>
-                                    <small class="thoigian text-muted">31/03/2022</small>
-                                    <div><a class="detail" href="#">Xem chi tiết</a></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col-sm-4">
-                        <div class="card">
-                            <a href="#" class="motsanpham" style="text-decoration: none; color: black;"
-                                data-toggle="tooltip" data-placement="bottom"
-                                title="Hào quang của vua Gia Long trong mắt Michel Gaultier">
-                                <img class="card-img-top anh" src="images/vua-gia-long.jpg" alt="vua-gia-long">
-                                <div class="card-body noidungsp mt-3">
-                                    <h3 class="card-title ten">Hào quang của vua Gia Long trong mắt Michel Gaultier</h3>
-                                    <small class="thoigian text-muted">21/03/2022</small>
-                                    <div><a class="detail" href="#">Xem chi tiết</a></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col-sm-4">
-                        <div class="card">
-                            <a href="#" class="motsanpham" style="text-decoration: none; color: black;"
-                                data-toggle="tooltip" data-placement="bottom"
-                                title="Suối nguồn” và cái tôi hiện sinh trong từng cá thể">
-                                <img class="card-img-top anh" src="images/suoi-nguon-va-cai-toi-trong-tung-ca-the.jpg"
-                                    alt="suoi-nguon-va-cai-toi-trong-tung-ca-the">
-                                <div class="card-body noidungsp mt-3">
-                                    <h3 class="card-title ten">"Suối nguồn” và cái tôi hiện sinh trong từng cá thể</h3>
-                                    <small class="thoigian text-muted">16/03/2022</small>
-                                    <div><a class="detail" href="#">Xem chi tiết</a></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-lg col-sm-4">
-                        <div class="card cuoicung">
-                            <a href="#" class="motsanpham" style="text-decoration: none; color: black;"
-                                data-toggle="tooltip" data-placement="bottom"
-                                title="Đại dịch trên những con đường tơ lụa">
-                                <img class="card-img-top anh" src="images/dai-dich-tren-con-duong-to-lua.jpg"
-                                    alt="dai-dich-tren-con-duong-to-lua">
-                                <div class="card-body noidungsp mt-3">
-                                    <h3 class="card-title ten">Đại dịch trên những con đường tơ lụa</h3>
-                                    <small class="thoigian text-muted">16/03/2022</small>
-                                    <div><a class="detail" href="#">Xem chi tiết</a></div>
-                                </div>
-                            </a>
+                <!-- pagination bar -->
+                <div class="pagination-bar my-3">
+                    <div class="row">
+                        <div class="col-12">
+                            <nav>
+                                <ul class="pagination justify-content-center">
+                                    <!-- <li class="page-item disabled">
+                                        <a class="page-link" href="#" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li> -->
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <span aria-hidden="true">&rsaquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
+
+                <!--het khoi san pham-->
             </div>
-            <hr>
+            <!--het div noidung-->
         </div>
+        <!--het container-->
     </section>
+    <!--het _1khoi-->
 
     <!-- thanh cac dich vu :mien phi giao hang, qua tang mien phi ........ -->
     <section class="abovefooter text-white" style="background-color: #CF111A;">
@@ -382,7 +556,7 @@
                     <div class="dichvu d-flex align-items-center">
                         <img src="images/icon-books.png" alt="icon-books">
                         <div class="noidung">
-                            <h3 class="tieude font-weight-bold">HƠN 14.000 TỰA SÁCH HAY</h3>
+                            <h6 class="tieude font-weight-bold">HƠN 14.000 TỰA SÁCH HAY</h6>
                             <p class="detail">Tuyển chọn bởi Parbo</p>
                         </div>
                     </div>
@@ -391,8 +565,8 @@
                     <div class="dichvu d-flex align-items-center">
                         <img src="images/icon-ship.png" alt="icon-ship">
                         <div class="noidung">
-                            <h3 class="tieude font-weight-bold">MIỄN PHÍ GIAO HÀNG</h3>
-                            <p class="detail">Từ 150.000đ ở Hà Nội</p>
+                            <h6 class="tieude font-weight-bold">MIỄN PHÍ GIAO HÀNG</h6>
+                            <p class="detail">Từ 150.000đ ở TP.HCM</p>
                             <p class="detail">Từ 300.000đ ở tỉnh thành khác</p>
                         </div>
                     </div>
@@ -401,7 +575,7 @@
                     <div class="dichvu d-flex align-items-center">
                         <img src="images/icon-gift.png" alt="icon-gift">
                         <div class="noidung">
-                            <h3 class="tieude font-weight-bold">QUÀ TẶNG MIỄN PHÍ</h3>
+                            <h6 class="tieude font-weight-bold">QUÀ TẶNG MIỄN PHÍ</h6>
                             <p class="detail">Tặng Bookmark</p>
                             <p class="detail">Bao sách miễn phí</p>
                         </div>
@@ -411,8 +585,8 @@
                     <div class="dichvu d-flex align-items-center">
                         <img src="images/icon-return.png" alt="icon-return">
                         <div class="noidung">
-                            <h3 class="tieude font-weight-bold">ĐỔI TRẢ NHANH CHÓNG</h3>
-                            <p class="detail">Hàng bị lỗi được đổi trả nhanh chóng trong 15 ngày đầu</p>
+                            <h6 class="tieude font-weight-bold">ĐỔI TRẢ NHANH CHÓNG</h6>
+                            <p class="detail">Hàng bị lỗi được đổi trả nhanh chóng</p>
                         </div>
                     </div>
                 </div>
@@ -426,7 +600,7 @@
             <div class="row">
                 <div class="col-md-3 col-xs-6">
                     <div class="gioithieu">
-                        <h3 class="header text-uppercase font-weight-bold">Về Parbo</h3>
+                        <h6 class="header text-uppercase font-weight-bold">Về Parbo</h6>
                         <a href="#">Giới thiệu về Parbo</a>
                         <a href="#">Tuyển dụng</a>
                         <div class="fb-like" data-href="https://www.facebook.com/Parbo-110745443947730/"
@@ -436,7 +610,7 @@
                 </div>
                 <div class="col-md-3 col-xs-6">
                     <div class="hotrokh">
-                        <h3 class="header text-uppercase font-weight-bold">HỖ TRỢ KHÁCH HÀNG</h3>
+                        <h6 class="header text-uppercase font-weight-bold">HỖ TRỢ KHÁCH HÀNG</h6>
                         <a href="#">Hướng dẫn đặt hàng</a>
                         <a href="#">Phương thức thanh toán</a>
                         <a href="#">Phương thức vận chuyển</a>
@@ -445,13 +619,13 @@
                 </div>
                 <div class="col-md-3 col-xs-6">
                     <div class="lienket">
-                        <h3 class="header text-uppercase font-weight-bold">HỢP TÁC VÀ LIÊN KẾT</h3>
+                        <h6 class="header text-uppercase font-weight-bold">HỢP TÁC VÀ LIÊN KẾT</h6>
                         <img src="images/dang-ky-bo-cong-thuong.png" alt="dang-ky-bo-cong-thuong">
                     </div>
                 </div>
                 <div class="col-md-3 col-xs-6">
                     <div class="ptthanhtoan">
-                        <h3 class="header text-uppercase font-weight-bold">Phương thức thanh toán</h3>
+                        <h6 class="header text-uppercase font-weight-bold">Phương thức thanh toán</h6>
                         <img src="images/visa-payment.jpg" alt="visa-payment">
                         <img src="images/master-card-payment.jpg" alt="master-card-payment">
                         <img src="images/jcb-payment.jpg" alt="jcb-payment">
@@ -469,6 +643,7 @@
         <div class="btn btn-warning float-right rounded-circle nutcuonlen" id="backtotop" href="#"
             style="background:#CF111A;"><i class="fa fa-chevron-up text-white"></i></div>
     </div>
+
 
 </body>
 
