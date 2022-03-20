@@ -26,6 +26,7 @@
             // print_r($sql).die('ok');
         }else{
             // die('ok');
+            $_SESSION["notification"]= "Email này đã được sử dụng!";
             header("location:index.php");
             die();
         }       

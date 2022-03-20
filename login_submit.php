@@ -23,14 +23,15 @@
                 }
                 header("location:index.php");
             }else{
-                $_SESSION["thongbao"] = "Mật khẩu không chính xác";
+                $_SESSION["notification"] = "Mật khẩu không chính xác";
+                header("location:index.php");
+                die();
                }
 
         }else{
-            $_SESSION['thongbao'] = "Không tồn tại tài khoản này";
+            $_SESSION['notification'] = "Không tồn tại tài khoản này";
+            header("location:index.php");
+            die();
         }
-    }else{
-        $_SESSION["thongbao"] = "Vui lòng nhập tài khoản và mật khẩu";
-    //    header("location:index.php");
     }
 ?>
