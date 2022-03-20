@@ -7,22 +7,8 @@
     // print_r($result);
     // exit();
     $q = isset($_REQUEST["q"]) ? $_REQUEST["q"] : '';
-	$qsessionname = "___Q___";
-	// print_r($qsessionname).die("ok");
-	if (!isset($_REQUEST["q"])){
-		$q = isset($_SESSION[$qsessionname]) ? $_SESSION[$qsessionname] : '';
-	}else{
-		$_SESSION[$qsessionname] = $q;
-	}
-	$cond = "";
-	$searchfields = array("","");
-	if ($q){
-		$sq = sql_str($q);
-		$cond = "where ";
-		$cond .= "  like '%{$sq}%' ";
-		// $cond .= " or description like '%{$sq}%' ";
-	}
-	//print_r($_SESSION).die("ok");
+
+	
 ?>
 <!DOCTYPE html>
 <html lang="vi">

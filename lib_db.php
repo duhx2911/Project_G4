@@ -29,7 +29,7 @@ function logDebug($mess){
 function connect(){
 	global $link;
 	if ($link) return 0;
-	$link = mysqli_connect('localhost', 'root', '');
+	$link = mysqli_connect('localhost', 'root', '',);
 	if (!$link) {
 	    die('<br/>Khong ket noi duoc: ');
 	}	
