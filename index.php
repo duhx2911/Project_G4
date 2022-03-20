@@ -1,9 +1,28 @@
 <?php
+    session_start();
+    include("connect.php");
     include("lib_db.php");
     $sql = "select * from sach";
     $result = select_list($sql);
-    //print_r($result);
-    //exit();
+    // print_r($result);
+    // exit();
+    $q = isset($_REQUEST["q"]) ? $_REQUEST["q"] : '';
+	$qsessionname = "___Q___";
+	// print_r($qsessionname).die("ok");
+	if (!isset($_REQUEST["q"])){
+		$q = isset($_SESSION[$qsessionname]) ? $_SESSION[$qsessionname] : '';
+	}else{
+		$_SESSION[$qsessionname] = $q;
+	}
+	$cond = "";
+	$searchfields = array("","");
+	if ($q){
+		$sq = sql_str($q);
+		$cond = "where ";
+		$cond .= "  like '%{$sq}%' ";
+		// $cond .= " or description like '%{$sq}%' ";
+	}
+	//print_r($_SESSION).die("ok");
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -59,12 +78,12 @@
 
             <div class="collapse navbar-collapse" id="collapsibleNavId">
                 <!-- form tìm kiếm  -->
-                <form class="form-inline ml-auto my-2 my-lg-0 mr-3">
+                <form action="timkiem.php?q=<?php echo $q?>" method="GET" class="form-inline ml-auto my-2 my-lg-0 mr-3">
                     <div class="input-group" style="width: 520px;">
-                        <input type="text" class="form-control" aria-label="Small"
+                        <input type="text" name="q" value="" class="form-control" aria-label="Small"
                             placeholder="Nhập sách cần tìm kiếm...">
                         <div class="input-group-append">
-                            <button type="button" class="btn" style="background-color: #CF111A; color: white;">
+                            <button type="submit" class="btn" style="background-color: #CF111A; color: white;">
                                 <i class="fa fa-search"></i>
                             </button>
                         </div>
@@ -145,24 +164,24 @@
                 <div class="modal-body">
                     <form action="register_submit.php" method="POST" id="form-signup" class="form-signin mt-2">
                         <div class="form-label-group">
-                            <input type="text" class="form-control" placeholder="Nhập họ và tên" name="name" required
+                            <input type="text" class="form-control" placeholder="Nhập họ và tên" name="name" 
                                 autofocus>
                         </div>
                         <div class="form-label-group">
                             <input type="text" class="form-control" placeholder="Nhập số điện thoại" name="phone"
-                                required>
+                                >
                         </div>
                         <div class="form-label-group">
                             <input type="email" class="form-control" placeholder="Nhập địa chỉ email" name="email"
-                                required>
+                                >
                         </div>
                         <div class="form-label-group">
-                            <input type="password" class="form-control" placeholder="Nhập mật khẩu" name="password"
-                                required>
+                            <input id ="inputPassword" type="password" class="form-control" placeholder="Nhập mật khẩu" name="password"
+                                >
                         </div>
                         <div class="form-label-group mb-4">
                             <input type="password" class="form-control" name="confirm_password"
-                                placeholder="Nhập lại mật khẩu" required>
+                                placeholder="Nhập lại mật khẩu" >
                         </div>
                         <button name="submit-dangky" class="btn btn-lg btn-block btn-signin text-uppercase text-white mt-3" type="submit"
                             style="background: #F5A623">Đăng ký</button>
@@ -512,7 +531,7 @@
                     <!-- 1 san pham -->
                     <?php foreach($result as $item){ ?>
                     <div class="card">
-                        <a href="Lap-trinh-ke-hoach-kinh-doanh-hieu-qua.html" class="motsanpham"
+                        <a href="chitiet.php?id=<?php echo $item['id']?>" class="motsanpham"
                             style="text-decoration: none; color: black;" data-toggle="tooltip" data-placement="bottom"
                             title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
                             <img class="card-img-top anh" src="<?php echo $item['img'] ?>"
@@ -1072,7 +1091,8 @@
         <div class="btn btn-warning float-right rounded-circle nutcuonlen" id="backtotop" href="#"
             style="background:#CF111A;"><i class="fa fa-chevron-up text-white"></i></div>
     </div>
-
+     
 </body>
-
+    <script>setTimeout( function(){alert('<?php echo $_SESSION['notification']?>');}, 300)  </script>
+     <?php unset($_SESSION['notification']); ?>              
 </html>

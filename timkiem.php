@@ -1,11 +1,34 @@
 <?php
+    session_start();
+    include("connect.php");
     include("lib_db.php");
-    $sql = "select * from sach";
-    $result = select_list($sql);
     //print_r($result);
     //exit();
+    $q = isset($_REQUEST["q"]) ? $_REQUEST["q"] : '';
+	$qsessionname = "___Q___";
+	// print_r($qsessionname).die("ok");
+	if (!isset($_REQUEST["q"])){
+		$q = isset($_SESSION[$qsessionname]) ? $_SESSION[$qsessionname] : '';
+	}else{
+		$_SESSION[$qsessionname] = $q;
+	}
+	$cond = "";
+	$searchfields = array("","");
+	if ($q){
+		$sq = sql_str($q);
+		$cond = "where ";
+		$cond .= " tensach like '%{$sq}%' ";
+		// $cond .= " or description like '%{$sq}%' ";
+	}
+
+	//print_r($_SESSION).die("ok");
+    $sql = "select * from sach {$cond} order by id desc ";
+	// echo $sql;exit();
+	//thuc thi cau lenh sql
+	$result = mysqli_query($conn,$sql);
+    // print_r($sql).die('ok');
 ?>
-)
+
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -60,12 +83,12 @@
 
             <div class="collapse navbar-collapse" id="collapsibleNavId">
                 <!-- form tìm kiếm  -->
-                <form class="form-inline ml-auto my-2 my-lg-0 mr-3">
+                <form action="timkiem.php" method="GET" class="form-inline ml-auto my-2 my-lg-0 mr-3">
                     <div class="input-group" style="width: 520px;">
                         <input type="text" class="form-control" aria-label="Small"
                             placeholder="Nhập sách cần tìm kiếm...">
                         <div class="input-group-append">
-                            <button type="button" class="btn" style="background-color: #CF111A; color: white;">
+                            <button type="button" value="search" class="btn" style="background-color: #CF111A; color: white;">
                                 <i class="fa fa-search"></i>
                             </button>
                         </div>
@@ -247,15 +270,15 @@
                 <div class="row">
                     <!--header-->
                     <div class="col-12 d-flex justify-content-between align-items-center pb-2 bg-transparent pt-4">
-                        <h1 class="header text-uppercase" style="font-weight: 400;">SÁCH MỚI TUYỂN CHỌN</h1>
+                        <h1 class="header text-uppercase" style="font-weight: 400;">TÌM KIẾM THEO "<?php echo $q?>"</h1>
                         <a href="sach-moi-tuyen-chon.html" class="btn btn-warning btn-sm text-white">Xem tất cả</a>
                     </div>
                 </div>
                 <div class="khoisanpham" style="padding-bottom: 2rem;">
                     <!-- 1 san pham -->
-                    <?php foreach($result as $item){ ?>
+                    <?php foreach($result as $item) { ?>
                     <div class="card">
-                        <a href="Lap-trinh-ke-hoach-kinh-doanh-hieu-qua.html" class="motsanpham"
+                        <a href="chitiet.php?id=<?php echo $item['id'] ?>" class="motsanpham"
                             style="text-decoration: none; color: black;" data-toggle="tooltip" data-placement="bottom"
                             title="Lập Kế Hoạch Kinh Doanh Hiệu Quả">
                             <img class="card-img-top anh" src="<?php echo $item['img'] ?>"
