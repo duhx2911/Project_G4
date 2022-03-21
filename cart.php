@@ -10,8 +10,11 @@
         // print_r($sql).exit();
         if(!isset($_SESSION["cart"])){
             $cart[$id] = array(
-                'name' => $row[4],
-                'img' => $row[3],
+                'id' => $row[0],
+                'name' => $row[3],
+                'img' => $row[2],
+                'giasale' => $row[5],
+                'giagoc' => $row[6],
                 'number' => 1
             );
 
@@ -19,14 +22,20 @@
             $cart = $_SESSION["cart"];
             if(array_key_exists($id,$cart)){
                 $cart[$id] = array(
-                    'name' => $row[4],
-                    'img' => $row[3],
+                    'id' => $row[0],
+                    'name' => $row[3],
+                    'img' => $row[2],
+                    'giasale' => $row[5],
+                    'giagoc' => $row[6],
                     'number' => (int)$cart[$id]["number"] + 1
                 );
             }else{
                 $cart[$id] = array(
-                    'name' => $row[4],
-                    'img' => $row[3],
+                    'id' => $row[0],
+                    'name' => $row[3],
+                    'img' => $row[2],
+                    'giasale' => $row[5],
+                    'giagoc' => $row[6],
                     'number' => 1
                 );
             }
