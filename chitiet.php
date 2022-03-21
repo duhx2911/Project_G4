@@ -12,12 +12,12 @@
     $sql = "SELECT * FROM sach where id=$id";
 
     $result = select_one($sql);
-    // $sqlOther = "SELECT * FROM sach limit 5";
-    // $resultOther = select_list($sqlOther);
+    $sqlOther = "SELECT * FROM sach limit 5";
+    $resultOther = select_list($sqlOther);
     // print_r($result).die("ok");
-    // $cm = "SELECT * FROM danhmucsach WHERE id={$result["gid"]}";
-    // $cmo = select_one($cm);
-
+    $cm = "SELECT * FROM danhmucsach WHERE id={$result["gid"]}";
+    $cmo = select_one($cm);
+    
 ?>
 
 <!DOCTYPE html>
